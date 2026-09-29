@@ -1,0 +1,71 @@
+rules_version = '2';
+
+// Generado por la fabrica desde backend/blueprint.yaml. No se edita a mano.
+//
+// Deny by default: lo que no aparece aqui esta cerrado, y cada entidad declara
+// explicitamente quien lee, quien crea, quien edita y quien borra. Ningun
+// `allow read, write: if true`, ni siquiera temporalmente para probar.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /documents/{docId} {
+      allow read: if request.auth.uid == resource.data.submitter_id || request.auth.token.role in ['approver', 'admin'];
+      allow create: if (false)
+                       && request.resource.data.keys().hasOnly(['submitter_id', 'origen', 'remitente', 'archivo_url', 'hash_sha256', 'tipo', 'estado', 'recibido_en'])
+                       && request.auth != null;
+      allow update: if (false)
+                       && request.resource.data.keys().hasOnly(['submitter_id', 'origen', 'remitente', 'archivo_url', 'hash_sha256', 'tipo', 'estado', 'recibido_en'])
+                       && request.auth != null;
+      allow delete: if false;
+    }
+
+    match /extractions/{docId} {
+      allow read: if request.auth.token.role in ['approver', 'admin'];
+      allow create: if (false)
+                       && request.resource.data.keys().hasOnly(['document_id', 'campos_json', 'confianza', 'modelo', 'prompt_version', 'extraido_en'])
+                       && request.auth != null;
+      allow update: if (false)
+                       && request.resource.data.keys().hasOnly(['document_id', 'campos_json', 'confianza', 'modelo', 'prompt_version', 'extraido_en'])
+                       && request.auth != null;
+      allow delete: if false;
+    }
+
+    match /validations/{docId} {
+      allow read: if request.auth.token.role in ['approver', 'admin'];
+      allow create: if (false)
+                       && request.resource.data.keys().hasOnly(['document_id', 'regla', 'resultado', 'detalle', 'ejecutada_en'])
+                       && request.auth != null;
+      allow update: if (false)
+                       && request.resource.data.keys().hasOnly(['document_id', 'regla', 'resultado', 'detalle', 'ejecutada_en'])
+                       && request.auth != null;
+      allow delete: if false;
+    }
+
+    match /approvals/{docId} {
+      allow read: if request.auth.token.role in ['approver', 'admin'];
+      allow create: if (request.auth.token.role in ['approver'])
+                       && request.resource.data.keys().hasOnly(['document_id', 'approver_id', 'decision', 'motivo', 'campos_corregidos_json', 'decidido_en'])
+                       && request.auth != null;
+      allow update: if (request.auth.token.role in ['approver'])
+                       && request.resource.data.keys().hasOnly(['document_id', 'approver_id', 'decision', 'motivo', 'campos_corregidos_json', 'decidido_en'])
+                       && request.auth != null;
+      allow delete: if false;
+    }
+
+    match /exports/{docId} {
+      allow read: if request.auth.token.role in ['admin'];
+      allow create: if (request.auth.token.role in ['admin'])
+                       && request.resource.data.keys().hasOnly(['lote', 'formato', 'generado_en', 'generado_por', 'documentos_ids', 'checksum'])
+                       && request.auth != null;
+      allow update: if (request.auth.token.role in ['admin'])
+                       && request.resource.data.keys().hasOnly(['lote', 'formato', 'generado_en', 'generado_por', 'documentos_ids', 'checksum'])
+                       && request.auth != null;
+      allow delete: if false;
+    }
+
+    // Cualquier coleccion no declarada en el blueprint no existe para nadie.
+    match /{documento=**} {
+      allow read, write: if false;
+    }
+  }
+}

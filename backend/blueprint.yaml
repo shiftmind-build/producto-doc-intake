@@ -1,0 +1,82 @@
+# Producto 2 del catalogo -- Doc Intake.
+#
+# El motor: leer. Lo que hace solo es recibir el documento, extraer sus campos, validarlo
+# contra las reglas del negocio y molestar a una persona unicamente con lo que no cuadra.
+# El valor no esta en extraer: esta en NO enseniar los noventa que salieron bien.
+#
+# Regla dura del sistema: la IA propone, una persona aprueba. Nada se exporta a
+# contabilidad sin que alguien lo haya decidido, y cada decision queda registrada.
+proyecto:
+  nombre: "Doc Intake"
+  formato: webapp
+  paleta: 6
+  tipografia: 6
+  efecto: 6
+  roles: [admin, approver, submitter]
+  entidades:
+    - nombre: documents
+      campos: [submitter_id, origen, remitente, archivo_url, hash_sha256, tipo, estado, recibido_en]
+      quien_lee: "quien lo envio (submitter), approver y admin"
+      quien_escribe: "el proceso de entrada; nadie edita el original"
+      acceso:
+        lee: [{"propio": "submitter_id"}, {"rol": ["approver", "admin"]}]
+        escribe: [{"sistema": true}]
+        borra: []
+    - nombre: extractions
+      campos: [document_id, campos_json, confianza, modelo, prompt_version, extraido_en]
+      quien_lee: "approver y admin"
+      quien_escribe: "solo el proceso de extraccion; se anyade una version, no se pisa"
+      acceso:
+        lee: [{"rol": ["approver", "admin"]}]
+        escribe: [{"sistema": true}]
+        borra: []
+    - nombre: validations
+      campos: [document_id, regla, resultado, detalle, ejecutada_en]
+      quien_lee: "approver y admin"
+      quien_escribe: "solo el motor de reglas"
+      acceso:
+        lee: [{"rol": ["approver", "admin"]}]
+        escribe: [{"sistema": true}]
+        borra: []
+    - nombre: approvals
+      campos: [document_id, approver_id, decision, motivo, campos_corregidos_json, decidido_en]
+      quien_lee: "approver y admin"
+      quien_escribe: "el approver asignado; inmutable una vez decidido"
+      acceso:
+        lee: [{"rol": ["approver", "admin"]}]
+        escribe: [{"rol": ["approver"]}]
+        borra: []
+    - nombre: exports
+      campos: [lote, formato, generado_en, generado_por, documentos_ids, checksum]
+      quien_lee: "admin"
+      quien_escribe: "solo admin"
+      acceso:
+        lee: [{"rol": ["admin"]}]
+        escribe: [{"rol": ["admin"]}]
+        borra: []
+  acciones_core:
+    - "recibir un documento por correo o por subida"
+    - "extraer sus campos con el modelo y guardar la confianza"
+    - "validar contra las reglas del negocio"
+    - "enrutar a una persona solo lo que falla una regla o baja de confianza"
+    - "aprobar o rechazar con el motivo, corrigiendo campos si hace falta"
+    - "exportar un lote aprobado en CSV"
+    - "consultar el historial completo de un documento"
+  pantallas:
+    - bandeja de lo que necesita una persona
+    - detalle del documento con el original al lado de los campos extraidos
+    - reglas de validacion y su configuracion
+    - historial y busqueda de documentos
+    - exportaciones generadas
+  fuera_de_alcance:
+    - integracion directa con un sistema contable concreto
+    - entrenar o afinar un modelo propio
+    - reconocimiento de escritura manuscrita
+    - mas de un idioma por instalacion
+    - firma electronica de los documentos
+  landing_keywords:
+    - automated invoice data extraction
+    - document intake automation
+    - ai document processing
+    - accounts payable automation
+  datos_sensibles: true

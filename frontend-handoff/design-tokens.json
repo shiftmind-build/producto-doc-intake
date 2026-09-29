@@ -1,0 +1,28 @@
+{
+  "color": {
+    "bg": "#0A0E14",
+    "surface": "#111826",
+    "ink": "#D6DEEB",
+    "accent": "#39FF88",
+    "accent2": "#FF3B5C"
+  },
+  "colorDark": {
+    "bg": "#0A0E14",
+    "surface": "#111826",
+    "ink": "#D6DEEB",
+    "accent": "#39FF88",
+    "accent2": "#FF3B5C"
+  },
+  "font": {
+    "heading": "JetBrains Mono",
+    "headingWeight": 600,
+    "body": "IBM Plex Sans",
+    "bodyWeight": 400
+  },
+  "radius": "4px",
+  "shadow": "none",
+  "motion": {
+    "durationMs": 100,
+    "easing": "linear"
+  }
+}
