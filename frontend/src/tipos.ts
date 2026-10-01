@@ -20,7 +20,15 @@ export type Validacion = {
 export type Campo = {
   nombre: string
   valor: string
-  confianza: number
+  /**
+   * Opcional a proposito.
+   *
+   * La extraccion guarda una confianza por documento, no por campo. Repartir la del
+   * documento entre los campos pintaria un 71% al lado de un proveedor que se leyo
+   * perfectamente, y entonces el numero deja de servir justo cuando mas falta hace.
+   * Sin valor, la pantalla no pinta la pastilla.
+   */
+  confianza?: number
 }
 
 export type Documento = {
@@ -28,10 +36,11 @@ export type Documento = {
   nombre_fichero: string
   tipo: 'invoice' | 'delivery_note' | 'receipt'
   proveedor: string
-  total_centavos: number
+  /** Vacio cuando la extraccion no lo leyo. Un total inventado es dinero de alguien. */
+  total_centavos?: number
   moneda: string
   recibido_en: Marca
-  confianza: number
+  confianza?: number
   /** `auto` no significa pagado: significa que ninguna persona necesita mirarlo. */
   via: 'auto' | 'persona'
   estado: 'pendiente_persona' | 'aprobado' | 'rechazado' | 'auto_aprobado'

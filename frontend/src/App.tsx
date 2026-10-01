@@ -32,7 +32,9 @@ function cuando(t?: { _seconds?: number }) {
   })
 }
 
-function dinero(centavos: number, moneda = 'EUR') {
+function dinero(centavos: number | undefined, moneda = 'EUR') {
+  // Un guion y no un cero: un cero es una cifra y se lee como tal.
+  if (centavos === undefined) return '—'
   return new Intl.NumberFormat(undefined, { style: 'currency', currency: moneda }).format(
     centavos / 100,
   )
@@ -44,7 +46,9 @@ function dinero(centavos: number, moneda = 'EUR') {
  * Un 0.71 suelto no dice nada a nadie. Un 0.71 en rojo al lado de un 0.94 en verde dice
  * exactamente donde esta el problema sin leer una linea de documentacion.
  */
-function Confianza({ valor, minima = 0.85 }: { valor: number; minima?: number }) {
+function Confianza({ valor, minima = 0.85 }: { valor: number | undefined; minima?: number }) {
+  // Sin confianza guardada no se pinta nada. Un 0% seria mentira y un 100% peor.
+  if (valor === undefined) return null
   return (
     <Pastilla tipo={valor >= minima ? 'bien' : 'mal'}>{Math.round(valor * 100)}%</Pastilla>
   )

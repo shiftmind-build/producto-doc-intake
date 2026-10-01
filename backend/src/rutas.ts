@@ -3,6 +3,7 @@ import { getFirestore, Timestamp } from 'firebase-admin/firestore'
 import { asyncHandler } from './lib/asyncHandler.js'
 import { requireRole, verificarAuth } from './lib/auth.js'
 import { REGLAS_BASE, decide, evalua, type Contexto } from './motor/triaje.js'
+import { montaPanel } from './panel.js'
 
 /**
  * Las rutas de Doc Intake.
@@ -84,24 +85,10 @@ export function montaRutas(app: Express) {
     }),
   )
 
-  /** La bandeja: solo lo que necesita una persona. Ese es el producto. */
-  app.get(
-    '/bandeja',
-    requireRole(['approver', 'admin']),
-    asyncHandler(async (_req: Request, res: Response) => {
-      const db = getFirestore()
-      const pendientes = await db
-        .collection('documents')
-        .where('estado', '==', 'pendiente_persona')
-        .orderBy('recibido_en', 'asc')
-        .limit(100)
-        .get()
-      res.status(200).json({
-        total: pendientes.size,
-        documentos: pendientes.docs.map((d) => ({ id: d.id, ...d.data() })),
-      })
-    }),
-  )
+  // La bandeja, el detalle y las reglas viven en panel.ts: no guardan nada, componen.
+  // Un documento esta repartido en tres colecciones y en la pantalla tiene que ser una
+  // fila con el motivo escrito al lado.
+  montaPanel(app)
 
   /** Aprobar o rechazar. Inmutable: una decision no se reescribe, se anyade otra. */
   app.post(
