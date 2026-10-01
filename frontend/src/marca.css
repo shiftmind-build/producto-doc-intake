@@ -1,0 +1,17 @@
+:root {
+  --bg: #0A0E14;
+  --superficie: #111826;
+  --tinta: #D6DEEB;
+  --acento: #39FF88;
+  --acento2: #FF3B5C;
+
+  --radio: 4px;
+  --sombra: none;
+  --duracion: 100ms;
+  --curva: linear;
+
+  --fuente-titular: 'JetBrains Mono', system-ui, sans-serif;
+  --peso-titular: 600;
+  --fuente-cuerpo: 'IBM Plex Sans', system-ui, sans-serif;
+  --peso-cuerpo: 400;
+}
